@@ -48,7 +48,7 @@ public class SearchEngine {
     }
 
     private void loadInvertedIndexFromDatabase() throws SQLException, IOException {
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql://43.138.16.33:3306/searcheng", "ser", "Fzl01620")) {
+        try (Connection connection = DriverManager.getConnection("jdbc:mysql://my-cloud-server:3306", "my-cloud-mysql-database", "my-password")) {
             String query = "SELECT * FROM indexed_documents";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             ResultSet resultSet = preparedStatement.executeQuery();
