@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 @RestController
@@ -22,7 +23,7 @@ public class SearchController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<SearchEngine.SearchResult>> search(@RequestParam("query") String query) throws IOException, ParseException, JSONException {
+    public ResponseEntity<List<SearchEngine.SearchResult>> search(@RequestParam("query") String query) throws IOException, ParseException, JSONException, SQLException {
         JSONObject jsonObj = new JSONObject(query);
         String queryString = jsonObj.getString("query");
         List<SearchEngine.SearchResult> results = searchEngine.search(queryString);
@@ -30,7 +31,7 @@ public class SearchController {
     }
 
     @PostMapping("/search")
-    public ResponseEntity<List<SearchEngine.SearchResult>> searchPost(@RequestBody String query) throws IOException, ParseException, JSONException {
+    public ResponseEntity<List<SearchEngine.SearchResult>> searchPost(@RequestBody String query) throws IOException, ParseException, JSONException, SQLException {
         JSONObject jsonObj = new JSONObject(query);
         String queryString = jsonObj.getString("query");
         List<SearchEngine.SearchResult> results = searchEngine.search(queryString);
