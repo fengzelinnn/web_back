@@ -1,6 +1,7 @@
 package com.example.web_back;
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.miscellaneous.LimitTokenCountAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -31,7 +32,12 @@ public class SearchEngine {
 
     public SearchEngine() throws SQLException, IOException {
         indexDirectory = new RAMDirectory();
-        analyzer = new StandardAnalyzer();
+
+        // 创建一个 StandardAnalyzer 的实例
+        Analyzer standardAnalyzer = new StandardAnalyzer();
+
+        // 创建一个 LimitTokenCountAnalyzer 的实例，限制词条的最大长度为 32766
+        analyzer = new LimitTokenCountAnalyzer(standardAnalyzer, 32766); // 修改这里，使用自定义的分析器
 
         // Load the inverted index from the database
         loadInvertedIndexFromDatabase();
@@ -91,11 +97,11 @@ public class SearchEngine {
         BooleanQuery.Builder booleanQuery = new BooleanQuery.Builder();
 
         for (String token : queryTokens) {
-            booleanQuery.add(new TermQuery(new Term("tokens", token)), BooleanClause.Occur.MUST);
+            booleanQuery.add(new TermQuery(new Term("content", token)), BooleanClause.Occur.SHOULD); // 修改这里，将 "tokens" 更改为 "content"
         }
 
         QueryParser queryParser = new QueryParser("content", analyzer);
-        Query luceneQuery = queryParser.parse(query);
+        Query luceneQuery = queryParser.parse(booleanQuery.build().toString()); // 修改这里，将 booleanQuery 添加到解析器中
 
         // Perform the search
         TopDocs topDocs = indexSearcher.search(luceneQuery, 10);
